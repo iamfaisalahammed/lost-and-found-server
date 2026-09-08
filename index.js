@@ -10,7 +10,7 @@ require("dotenv").config();
 const app = express();
 const port = process.env.PORT || 5000;
 
-// !-------------------middleware--------------------------------
+// !-------------------middleware------------------------------
 
 app.use(
   cors({
@@ -43,21 +43,21 @@ async function run() {
 
     await client.connect();
 
-    await client.db("admin").command({ ping: 1 });
+    // await client.db("admin").command({ ping: 1 });
 
-    console.log(
-      "Pinged your deployment. You successfully connected to MongoDB!",
-    );
+    // console.log(
+    //   "Pinged your deployment. You successfully connected to MongoDB!",
+    // );
 
-    //!-------------------------------DB--------------------------------
+    //!-------------------------------DB---------------------------
 
     const LostAndFoundCollection = client.db("lost-found").collection("data");
 
     const recoveredCollection = client.db("lost-found").collection("recovered");
 
-    //!-------------------------------LostAndFound------------------------
+    //!-------------------------------LostAndFound-------------------
 
-    // !------------------- Get All Items -------------------
+    // !----------------------- Get All Items -----------------------
 
     app.get("/allItems", async (req, res) => {
       try {
@@ -123,7 +123,7 @@ async function run() {
           newData.createdAt = new Date();
         }
 
-        console.log("Adding new addItems:", newData);
+       
 
         const result = await LostAndFoundCollection.insertOne(newData);
 
@@ -145,7 +145,7 @@ async function run() {
       try {
         const id = req.params.id;
 
-        console.log("Get Single Item ID:", id);
+     
 
         if (!id || !ObjectId.isValid(id)) {
           return res.status(400).send({
@@ -185,8 +185,7 @@ async function run() {
       try {
         const email = req.query.email;
 
-        console.log("My Item Email:", email);
-
+       
         if (!email) {
           return res.status(400).send({
             success: false,
@@ -240,7 +239,7 @@ async function run() {
       try {
         const id = req.params.id;
 
-        console.log("Get Update Item ID:", id);
+        
 
         if (!id || !ObjectId.isValid(id)) {
           return res.status(400).send({
@@ -280,7 +279,7 @@ async function run() {
       try {
         const id = req.params.id;
 
-        console.log("Delete ID:", id);
+   
 
         if (!id || !ObjectId.isValid(id)) {
           return res.status(400).send({
@@ -295,7 +294,7 @@ async function run() {
 
         const result = await LostAndFoundCollection.deleteOne(query);
 
-        console.log("Delete Result:", result);
+     
 
         if (result.deletedCount === 0) {
           return res.status(404).send({
@@ -326,8 +325,7 @@ app.put("/myItems/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
-    console.log("Update ID:", id);
-    console.log("Update Data:", req.body);
+   
 
     // !------------------- Validate ID -------------------
     if (!id) {
@@ -349,7 +347,7 @@ app.put("/myItems/:id", async (req, res) => {
       PostType,
       Title,
       Category,
-      Thumbnail,
+      Photo,
       description,
       location,
       Contact,
@@ -361,7 +359,7 @@ app.put("/myItems/:id", async (req, res) => {
       !PostType ||
       !Title ||
       !Category ||
-      !Thumbnail ||
+      !Photo ||
       !description ||
       !location ||
       !Contact ||
@@ -380,7 +378,7 @@ app.put("/myItems/:id", async (req, res) => {
 
     const existingItem = await LostAndFoundCollection.findOne(filter);
 
-    console.log("Existing Item:", existingItem);
+  
 
     if (!existingItem) {
       return res.status(404).send({
@@ -395,7 +393,7 @@ app.put("/myItems/:id", async (req, res) => {
         PostType,
         Title,
         Category,
-        Thumbnail,
+        Photo,
         description,
         location,
         Contact,
@@ -411,7 +409,7 @@ app.put("/myItems/:id", async (req, res) => {
       updateDoc,
     );
 
-    console.log("Update Result:", result);
+    
 
     // !------------------- Check Update -------------------
     if (result.matchedCount === 0) {
@@ -574,7 +572,7 @@ app.post("/AddRecovered", async (req, res) => {
         existingItem.Title || "Lost Item",
 
       itemImage:
-        existingItem.Thumbnail || "",
+        existingItem.Photo || "",
 
       itemCategory:
         existingItem.Category || "",
@@ -862,7 +860,7 @@ app.get("/RecoveredItems", async (req, res) => {
       })
       .toArray();
 
-    console.log("Recovered Items:", result);
+    
 
     res.send(result);
   } catch (error) {
@@ -879,7 +877,7 @@ app.get("/RecoveredItems", async (req, res) => {
 
 
 // --------------------------------------------------
-    console.log("MongoDB connection and routes are ready!");
+   
   } catch (error) {
     console.error("MongoDB connection error:", error);
   }
